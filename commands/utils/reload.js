@@ -49,7 +49,7 @@ function reloadCommands(message, commandFolders){
                 message.channel.send(`Command \`${command.name}\` was reloaded!`);
             }catch(error){
                 console.error(error);
-                message.channel.send(`There was an error while reloading a command \`${command.name}\`:\n\`${error.message}\``);
+                message.channel.send(`There was an error while reloading a command:\n\`${error.message}\``);
             }
         }
     }
@@ -66,7 +66,7 @@ function reloadEvents(message){
                 message.channel.send(`Event \`${event.name}\` was reloaded!`);
             }catch(error){
                 console.error(error);
-                message.channel.send(`There was an error while reloading an event \`${event.name}\`:\n\`${error.message}\``);
+                message.channel.send(`There was an error while reloading an event:\n\`${error.message}\``);
             }
         }
 }
