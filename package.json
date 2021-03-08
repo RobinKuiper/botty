@@ -1,0 +1,11 @@
+{
+  "name": "botty",
+  "version": "0.0.1",
+  "description": "Discord Bot",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Robin Kuiper",
+  "license": "ISC"
+}
