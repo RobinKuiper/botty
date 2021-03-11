@@ -1,11 +1,23 @@
-const { mainChannel } = require("../config.json");
-
 let temporary = [];
+let disabled = false;
+let mainChannel;
 
 module.exports = {
   name: "voiceStateUpdate",
   once: false,
+  init(client){
+    client.log('info', 'Initializing voice channel adder.');
+
+    if(!client.config.has('mainChannel') || !client.config.get('mainChannel')){
+      disabled = true;
+      return client.log('error', 'Mainchannel not given, disabling...');
+    }
+
+    mainChannel = client.config.get('mainChannel');
+  },
   async execute(oldState, newState, client) {
+    if(disabled) return;
+
     let oldChannel = oldState.channelID ? oldState.channelID : null;
     let newChannel = newState.channelID ? newState.channelID : null;
     if(oldChannel === newChannel) return;
@@ -29,9 +41,9 @@ module.exports = {
       temporary.find((x) => x.channelID === newState.channelID)
     ) {
       if (!emptyChannels(newState.guild)) {
-        client.channels.cache
-          .get(mainChannel)
-          .clone({ name: `Gaming ${temporary.length + 2}` })
+        let mChannel = client.channels.cache.get(mainChannel);
+        mChannel
+          .clone({ name: `${mChannel.name} ${temporary.length + 2}` })
           .then((channel) => {
             channel.setPosition(temporary.length + 1, { relative: false });
             temporary.push({ channelID: channel.id, guild: channel.guild });

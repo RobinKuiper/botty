@@ -1,10 +1,12 @@
 /* eslint-disable no-case-declarations */
 const Discord = require("discord.js");
 const request = require("request");
-const { crafty_api_token, crafty_host } = require('../../config.json');
 const colors = require("../../colors.json");
 
 const EMOJI = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
+
+let disabled = false;
+let crafty_api_token, crafty_host;
 
 module.exports = {
   name: "minecraft",
@@ -18,7 +20,20 @@ module.exports = {
   usage: ["[servername]", "[start/stop/restart] [servername]"],
   guildOnly: true,
   cooldown: 5,
+  init(client) {
+    client.log("info", "Initializing Minecraft.");
+
+    if(!checkConfig(client)){
+      disabled = true;
+      return client.log('error', 'Minecraft config is not correct, disabling...');
+    }
+
+    crafty_api_token = client.config.get('crafty_api_token');
+    crafty_host = client.config.get('crafty_host');
+  },
   execute(message, args, client) {
+    if(disabled) return;
+
     let member = message.channel.guild.members.cache.get(message.author.id);
     let hasRole = member.roles.cache.has("818848936210595860");
 
@@ -115,6 +130,12 @@ module.exports = {
     }
   },
 };
+
+function checkConfig(client){
+  if(!client.config.has('crafty_api_token') || !client.config.get('crafty_api_token') || !client.config.has('crafty_host') || !client.config.get('crafty_host')) return false;
+
+  return true;
+}
 
 function post(path, id, callback) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";

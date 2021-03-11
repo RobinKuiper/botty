@@ -1,17 +1,20 @@
-const logger = require("./logger");
-const { token } = require("./config.json");
-const { Users } = require("./dbObjects");
 const fs = require("fs");
+const logger = require("./logger");
+const config = require('config');
+const { Users } = require("./dbObjects");
 
 const Discord = require("discord.js");
 const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
 
+client.config = config;
 client.log = (type, message) => logger.log(type, message);
 
 client.on("debug", (m) => logger.log("debug", m));
 client.on("warn", (m) => logger.log("warn", m));
 client.on("error", (m) => logger.log("error", m));
 process.on("uncaughtException", (error) => logger.log("error", error));
+
+client.log('info', `Environment: ${process.env.NODE_ENV}`);
 
 client.userList = new Discord.Collection();
 
@@ -65,6 +68,7 @@ const eventFiles = fs
 
 for (const file of eventFiles) {
   const event = require(`./events/${file}`);
+  if (event.init && typeof event.init === "function") event.init(client);
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args, client));
   } else {
@@ -87,4 +91,7 @@ for (const folder of commandFolders) {
   }
 }
 
-client.login(token);
+if(!config.has('token') || !config.get('token')){
+  client.log('error', 'You have not provided a Discord bot token in the config files.');
+}else
+  client.login(config.get('token'));

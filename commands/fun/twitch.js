@@ -3,8 +3,6 @@ const { ApiClient } = require("twitch");
 const { ClientCredentialsAuthProvider } = require("twitch-auth");
 const { WebHookListener, SimpleAdapter } = require("twitch-webhooks");
 
-const { twitch_client_id, twitch_client_secret } = require("../../config.json");
-
 const colors = require("../../colors.json");
 
 const twitch_user_file = "data/twitch_subscriptions.json";
@@ -12,6 +10,9 @@ const twitch_user_file = "data/twitch_subscriptions.json";
 let apiClient = null;
 let listener = null;
 let listeners = {};
+let disabled = false;
+
+let twitch_client_id, twitch_client_secret;
 
 module.exports = {
   name: "twitch",
@@ -25,6 +26,14 @@ module.exports = {
   cooldown: 5,
   async init(client) {
     client.log("info", "Initializing Twitch.");
+
+    if(!checkConfig(client)) {
+      disabled = true;
+      return client.log('error', 'Twitch config not correct, disabling...');
+    }
+
+    twitch_client_id = client.config.get('twitch_client_id');
+    twitch_client_secret = client.config.get('twitch_client_secret');
 
     const authProvider = new ClientCredentialsAuthProvider(
       twitch_client_id,
@@ -54,6 +63,8 @@ module.exports = {
     }
   },
   async execute(message, args, client) {
+    if(disabled) return;
+
     const command = args[0];
     const twitchname = args[1];
     let subscriptions = [];
@@ -99,6 +110,12 @@ module.exports = {
     }
   },
 };
+
+function checkConfig(client){
+  if(!client.config.has('twitch_client_id') || !client.config.get('twitch_client_id') || !client.config.has('twitch_client_secret') || !client.config.get('twitch_client_secret')) return false;
+
+  return true;
+}
 
 function getSubscriptions() {
   if (fs.existsSync(twitch_user_file)) {

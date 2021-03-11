@@ -1,8 +1,13 @@
-const { prefix } = require("../config.json");
 const Discord = require("discord.js");
+
+let prefix = '!';
 
 module.exports = {
   name: "message",
+  init(client){
+    client.log('info', 'Listening to messages...');
+    prefix = client.config.get('prefix') || prefix;
+},
   execute(message, client) {
     if (!message.author.bot) {
       client.userList.addExperience(message.author.id, 1)

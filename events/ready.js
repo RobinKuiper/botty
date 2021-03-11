@@ -1,4 +1,3 @@
-const { username, state, activity, avatar } = require("../config.json");
 const { Users } = require("../dbObjects");
 require("../dbInit.js");
 
@@ -9,7 +8,7 @@ module.exports = {
     client.log('info', `Ready! Logged in as ${client.user.tag}`);
 
     //client.user.setUsername(username);
-    client.user.setActivity(activity);
+    //client.user.setActivity(activity);
     //client.user.setStatus(state);
     //client.user.setAvatar(avatar);
 

@@ -1,5 +1,6 @@
-const { prefix } = require('../../config.json');
 const colors = require('../../colors.json');
+
+let prefix = '!';
 
 module.exports = {
     name: 'help',
@@ -8,6 +9,9 @@ module.exports = {
     usage: '[command name]',
     image: 'https://i.imgur.com/IHkfgzl.png',
     cooldown: 5,
+    init(client){
+        prefix = client.config.get('prefix') || prefix;
+    },
     execute(message, args){
         const data = [];
         const { commands } = message.client;
