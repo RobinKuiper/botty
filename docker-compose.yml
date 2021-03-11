@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  botty:
+    build: .
+    container_name: botty
+    ports:
+      - "5000:8080"
+    volumes:
+      - ./data:/botty/data
+      - ./config.json:/botty/config.json
