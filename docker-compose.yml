@@ -6,6 +6,6 @@ services:
     container_name: botty
     ports:
       - "5000:8080"
-    volumes:
-      - ./data:/botty/data
-      - ./config.json:/botty/config.json
+#    volumes:
+#      - ./data:/botty/data
+#      - ./config.json:/botty/config.json

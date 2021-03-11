@@ -16,4 +16,4 @@ COPY example_config.json config.json
 
 EXPOSE 8080
 
-CMD [ "node", "main.js" ]
+CMD [ "node", "inspect", "main.js" ]
