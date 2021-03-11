@@ -41,7 +41,7 @@ module.exports = {
     );
     await listener.listen();
 
-    let subscriptions = getSubscriptions();
+    let subscriptions = getSubscriptions() || [];
 
     if (subscriptions && subscriptions.length > 0) {
       for (let i = 0; i < subscriptions.length; i++) {
@@ -67,8 +67,8 @@ module.exports = {
 
         subscribe(twitchname, message.channel, client);
 
-        subscriptions =
-          getSubscriptions().filter((u) => u.twitchname !== twitchname) || [];
+        subscriptions = getSubscriptions() || [];
+        subscriptions.filter((u) => u.twitchname !== twitchname);
 
         subscriptions.push({
           twitchname,
@@ -85,8 +85,8 @@ module.exports = {
       case "unsubscribe":
         if (listeners[twitchname]) listeners[twitchname].stop();
 
-        subscriptions =
-          getSubscriptions().filter((u) => u.twitchname !== twitchname) || [];
+        subscriptions = getSubscriptions() || [];
+        subscriptions.filter((u) => u.twitchname !== twitchname);
 
         fs.writeFileSync(twitch_user_file, JSON.stringify(subscriptions));
 
