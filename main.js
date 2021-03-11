@@ -1,8 +1,7 @@
-const fs = require("fs");
-const request = require('request');
 const logger = require("./logger");
 const { token } = require("./config.json");
 const { Users } = require("./dbObjects");
+const fs = require("fs");
 
 const Discord = require("discord.js");
 const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
