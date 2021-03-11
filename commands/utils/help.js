@@ -1,46 +1,78 @@
 const { prefix } = require('../../config.json');
+const colors = require('../../colors.json');
 
 module.exports = {
     name: 'help',
     description: "List of all commands or info about a specific command",
     aliases: ['commands'],
     usage: '[command name]',
+    image: 'https://i.imgur.com/IHkfgzl.png',
     cooldown: 5,
     execute(message, args){
         const data = [];
         const { commands } = message.client;
         
         if(!args.length){
-            data.push('Here is a list of all commands:');
-            data.push(commands.map(command => command.name).join(', '));
-            data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
 
-            return message.author.send(data, { split: true })
-                .then(() => {
+            let description = `
+            ${commands.filter(c => c.inHelp !== false).map(command => command.name).join('\n')}
+        `
+
+        const embed = {
+            color: colors[Math.floor(Math.random()*colors.length)].hex,
+            title: `__Commands__`,
+            description,
+            thumbnail: {
+                url: 'https://i.imgur.com/IHkfgzl.png',
+            },
+            footer: {
+                text: `You can send \`${prefix}help [command]\` to get info on a specific command.`
+            }
+        }
+
+            return message.channel.send({ embed })
+                /*.then(() => {
                     if(message.channel.type === "dm") return;
                     message.reply('I\'ve send you a DM with all my commands.');
                 })
                 .catch(error => {
                     console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
                     message.reply('it seems like I can\'t DM you! Do you have DMs disabled?');
-                })
+                })*/
         }
 
         const name = args[0].toLowerCase();
         const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
         if(!command){
-            return message.reply('that\'s not a valid command!');
+            return message.reply('I\'ve never heard of that command.');
         }
 
-        data.push(`**Name:** ${command.name}`);
+        let usage = [];
+        if(Array.isArray(command.usage)){
+            for(let i = 0; i < command.usage.length; i++){
+                usage.push(`${prefix}${command.name} ${command.usage[i]}`)
+            }
+        }else
+            usage.push(`${prefix}${command.name} ${command.usage}`);
 
-        if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
-        if (command.description) data.push(`**Description:** ${command.description}`);
-        if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
+        let description = ``;
 
-        data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+        if(command.aliases && command.aliases.length > 0) description += `**Aliases:** *${command.aliases.join(', ')}*\n\n`;
+        if(command.description && command.description.length > 3) description += `**Description:**\n*${command.description}*\n\n`;
+        if(command.usage) description += `**Usage:**\n*${usage.join('\n')}*\n\n`;
 
-        message.channel.send(data, { split: true });
+        description += `**Cooldown:** *${command.cooldown || 3} second(s)*`;
+
+        const embed = {
+            color: colors[Math.floor(Math.random()*colors.length)].hex,
+            title: `__Help: ${command.name.charAt(0).toUpperCase() + command.name.slice(1)}__`,
+            description,
+            thumbnail: {
+                url: command.image || 'https://steemitimages.com/DQmWoqx8Qt95BnXmLzaqQu7HFcp8pngYZM2CCosoavfn4JL/depositphotos_79132680-stock-illustration-noob-red-stamp-text.jpg',
+            },
+        }
+
+        message.channel.send({ embed });
     }
 }

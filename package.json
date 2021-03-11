@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pm2 start main --watch",
+    "start": "pm2 start ecosystem.config.js --watch && pm2 logs",
+    "restart": "pm2 restart ecosystem.config.js && pm2 logs",
+    "stop": "pm2 stop all",
     "lint": "eslint ."
   },
   "author": "Robin Kuiper",
@@ -13,7 +15,11 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "eslint": "^7.21.0",
+    "request": "^2.88.2",
     "sequelize": "^6.5.0",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "twitch": "^4.5.0",
+    "twitch-webhooks": "^4.5.0",
+    "winston": "^3.3.3"
   }
 }

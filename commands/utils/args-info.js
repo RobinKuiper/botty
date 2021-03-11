@@ -6,6 +6,7 @@ module.exports = {
     usage: "foo",
     guildOnly: true,
     cooldown: 5,
+    inHelp: false,
     permissions: "CHECK_ARGS",
     execute(message, args) {
         if(args[0] === 'foo'){

@@ -4,9 +4,24 @@ const Discord = require("discord.js");
 module.exports = {
   name: "message",
   execute(message, client) {
-    console.log(
+    if (!message.author.bot) {
+      client.userList.addExperience(message.author.id, 1)
+        .then(levelUp => {
+          if (levelUp) {
+            const levelUpEmbed = new Discord.MessageEmbed()
+              .setColor("#ff0000")
+              .setTitle("LEVEL UP!");
+    
+            message.channel.send(levelUpEmbed);
+          }
+        });
+    }
+
+    client.log('info',
       `${message.author.tag} in #${message.channel.name} sent: ${message.content}`
     );
+    client.log('info', `Guild ID: ${message.channel.guild.id}`)
+    client.log('info', `Channel ID: ${message.channel.id}`)
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
@@ -66,7 +81,7 @@ module.exports = {
     }
 
     try {
-      command.execute(message, args);
+      command.execute(message, args, client);
     } catch (err) {
       console.error(err);
       message.reply("There was an error trying to execute that command!");

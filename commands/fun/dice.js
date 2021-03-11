@@ -1,24 +1,37 @@
+const colors = require("../../colors.json");
+
 module.exports = {
     name: 'dice',
     description: 'Roll your dice!',
     aliases: ['d', 'roll', 'r'],
     args: true,
-    usage: "1d6",
+    category: "fun",
+    image: 'https://i.imgur.com/SDN44F6.png',
+    usage: "1d6+4",
     guildOnly: false,
     cooldown: 0,
     execute(message, args) {
         const die = getDie(args[0].toLowerCase());
 
-        let solution = 0;
-        let numberString = "";
-        for(let i = 0; i < die.howMany; i++){
-            let number = Math.floor(Math.random() * die.dice) + 1;
-            numberString += number;
-            if(i < die.howMany-1) numberString += ', ';
-            solution += number+die.modifier;
+        const rolls = [];
+        for (let i = 0; i < die.howMany; i++) {
+            rolls.push(Math.floor(Math.random() * die.dice) + 1);
         }
+
+        const sum = rolls.reduce((a, b) => a+b, 0);
+
+        const description = `**Rolls:** ${rolls.join(", ")}`;
+
+        const embed = {
+            color: colors[Math.floor(Math.random()*colors.length)].hex,
+            title: `🎲 __${sum}__ 🎲`,
+            description,
+            footer: {
+                text: args[0]
+            }
+          };
         
-        message.channel.send(`${numberString}\n${args[0]}: ${solution}`);
+          message.channel.send({ embed })
     },
 };
 

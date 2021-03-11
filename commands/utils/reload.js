@@ -2,7 +2,8 @@ const fs = require('fs');
 
 module.exports = {
 	name: 'reload',
-	description: 'Reloads a command',
+    description: 'Reloads a command',
+    inHelp: false,
 	execute(message, args) {
 
         const commandFolders = fs.readdirSync('./commands');
