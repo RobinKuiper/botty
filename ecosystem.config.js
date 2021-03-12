@@ -3,7 +3,7 @@ module.exports = {
     name: "botty",
     script: 'main.js',
     watch: true,
-    ignore_watch : ["node_modules", "client/img", "database.sqlite", "database.sqlite-journal", "logs", "data/database.sqlite"]
+    ignore_watch : ["node_modules", "client/img", "data/database.sqlite-journal", "logs", "data/database.sqlite", "config/modules.json", "modules/minecraft/servers.json"]
   }],
 
   deploy : {

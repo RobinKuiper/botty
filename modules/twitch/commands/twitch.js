@@ -3,7 +3,7 @@ const { ApiClient } = require("twitch");
 const { ClientCredentialsAuthProvider } = require("twitch-auth");
 const { WebHookListener, SimpleAdapter } = require("twitch-webhooks");
 
-const colors = require("../../colors.json");
+const colors = require("../../../colors.json");
 
 const twitch_user_file = "data/twitch_subscriptions.json";
 
@@ -119,11 +119,10 @@ function checkConfig(client){
 
 function getSubscriptions() {
   if (fs.existsSync(twitch_user_file)) {
-    let raw_users = fs.readFileSync(twitch_user_file);
-    return JSON.parse(raw_users);
+    return JSON.parse(fs.readFileSync(twitch_user_file));
   }
 
-  return null;
+  return {};
 }
 
 async function subscribe(twitchname, channel, client) {

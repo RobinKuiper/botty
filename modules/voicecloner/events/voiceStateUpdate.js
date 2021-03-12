@@ -6,7 +6,7 @@ module.exports = {
   name: "voiceStateUpdate",
   once: false,
   init(client){
-    client.log('info', 'Initializing voice channel adder.');
+    client.log('info', 'Initializing voice channel cloner.');
 
     if(!client.config.has('mainChannel') || !client.config.get('mainChannel')){
       disabled = true;
