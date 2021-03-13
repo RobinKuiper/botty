@@ -1,3 +1,5 @@
+// TODO: Refactor
+
 /* eslint-disable no-case-declarations */
 const fs = require("fs");
 const request = require("request");
@@ -52,7 +54,10 @@ module.exports = {
             auto_stop_on_no_players: true,
             show_players: true,
             role_id: "",
+            image: "https://seeklogo.com/images/M/minecraft-logo-5EAD3A1535-seeklogo.com.png" 
           };
+        }else{
+          if(!JSONservers[servers[i].id].image) JSONservers[servers[i].id].image = "https://seeklogo.com/images/M/minecraft-logo-5EAD3A1535-seeklogo.com.png";
         }
       }
 

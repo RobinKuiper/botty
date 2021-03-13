@@ -1,0 +1,432 @@
+<h1>Messages</h1>
+
+<iframe style="display: none;" name="dummyframe" id="dummyframe"></iframe>
+<div class="row">
+    <div class="col">
+        <h4>Text Message</h4>
+        <form action="/sendMessage" method="post" target="dummyframe"
+            class="row row-cols-lg-auto g-3 align-items-center" style="margin-left: 0px;">
+            <input type="hidden" name="token" value="{{token}}">
+            <div class="form-group">
+                <label for="channel">Channel</label>
+                <select class="custom-select" name="channelid" id="channel">
+                    {{#each channels}}
+                    <option value="{{this.id}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea class="form-control" name="message" id="message" rows="1"
+                    placeholder="I 💕 you all!"></textarea>
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button class="form-control" type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h4>Embed</h4>
+        <div class="row">
+            <div class="col">
+                <form action="/sendEmbed" method="post" target="dummyframe">
+                    <input type="hidden" name="token" value="{{token}}">
+                    <div class="form-group">
+                        <label for="channel">Channel</label>
+                        <select class="custom-select" name="channelid" id="channel">
+                            {{#each channels}}
+                            <option value="{{this.id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <input type="text" class="form-control" name="color" id="color" value="#ff0000" onChange="embedOnChange(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" name="title" id="title" placeholder="Best embed ever!" onChange="embedOnChange(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="url">Url</label>
+                        <input type="text" class="form-control" name="url" id="url" placeholder="https://google.com" onChange="embedOnChange(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="thumbnail">Thumbnail</label>
+                        <input type="text" class="form-control" name="thumbnail" id="thumbnail"
+                            placeholder="https://example.com/thumbnail.png" onChange="embedOnChange(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" name="description" id="description" rows="3"
+                            placeholder="This is the best embed ever made!" onChange="embedOnChange(event)"></textarea>
+                    </div>
+
+                    <fieldset>
+                        <legend>Author</legend>
+
+                        <div class="form-group">
+                            <label for="authorname">Author Name</label>
+                            <input type="text" class="form-control" name="authorname" id="authorname"
+                                placeholder="Robin Kuiper" onChange="embedOnChange(event)">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="authorurl">Author Url</label>
+                            <input type="text" class="form-control" name="authorurl" id="authorurl"
+                                placeholder="https://robinkuiper.eu" onChange="embedOnChange(event)">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="authoricon">Author Icon</label>
+                            <input type="text" class="form-control" name="authoricon" id="authoricon"
+                                placeholder="https://example.com/icon.png" onChange="embedOnChange(event)">
+                        </div>
+
+                    </fieldset>
+
+                    <!--<fieldset id="fields">
+                        <legend>Fields</legend>
+
+                        <div class="field">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="fieldtitle">Title</label>
+                                        <input type="text" class="form-control" name="field[0][title]" id="fieldtitle"
+                                            placeholder="Title" onChange="embedOnChange(event)">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="fieldvalue">Value</label>
+                                        <input type="text" class="form-control" name="field[0][value]" id="fieldvalue"
+                                            placeholder="Value" onChange="embedOnChange(event)">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inline">
+                                            Inline?
+                                        </label>
+                                        <br>
+                                        <input type="checkbox" name="field[0][inline]" id="inline" onChange="embedOnChange(event)">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <label for="inline">&nbsp;</label><br>
+                                    <span name="deleteField" id="deleteField" class="btn btn-danger" role="button"><span
+                                            data-feather="trash-2"></span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                    <div class="row">
+                        <span name="addField" id="addField" class="btn btn-primary" role="button"><span
+                                data-feather="plus"></span></span>
+                    </div>-->
+
+                    <div class="form-group">
+                        <label for="image">Image</label>
+                        <input type="text" class="form-control" name="image" id="image"
+                            placeholder="https://example.com/image.png" onChange="embedOnChange(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="footertext">Footer Text</label>
+                        <input type="text" class="form-control" name="footertext" id="footertext"
+                            placeholder="Lovely footer!" onChange="embedOnChange(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="footericon">Footer Icon</label>
+                        <input type="text" class="form-control" name="footericon" id="footericon"
+                            placeholder="https://example.com/icon.png" onChange="embedOnChange(event)">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
+
+            <style>
+                a.patreon-link {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    box-sizing: border-box;
+                    width: 100%;
+                    height: auto;
+                    z-index: 10;
+                    text-decoration: none;
+                }
+
+                .badge-container {
+                    width: 100%;
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                    flex-direction: column;
+                    padding: 5px 10px;
+                    background: rgba(0, 0, 0, 0.5);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    text-align: center;
+                }
+
+                .badge-container .badge-icon {
+                    background: url("https://s3.amazonaws.com/patreon_public_assets/toolbox/patreon_white.png") center center no-repeat;
+                    background-size: contain;
+                    width: 100%;
+                    height: 20px;
+                }
+
+                .badge-container .badge-text {
+                    font-family: "Lato", sans-serif;
+                    font-size: 12px;
+                    padding: 2px;
+                    color: #fff;
+                }
+
+                .badge-container .badge-text.badge-text-bottom {
+                    position: relative;
+                    top: -2px;
+                }
+
+                .preview {
+                    background: #36393e;
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    box-orient: vertical;
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                    flex-direction: column;
+                }
+
+                .wrapper {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    max-width: 520px;
+                }
+
+                .container {
+                    margin-top: 50px;
+                }
+
+                .side-colored {
+                    width: 4px;
+                    border-radius: 3px 0 0 3px;
+                    background: #4f545c;
+                }
+
+                .embed {
+                    border-radius: 0 3px 3px 0;
+                    background: rgba(46, 48, 54, 0.3);
+                    border-color: rgba(46, 48, 54, 0.6);
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    padding: 8px 10px;
+                    color: rgba(255, 255, 255, 0.6);
+                    font-size: 14px;
+                }
+
+                .embed .card-block {
+                    padding: 0;
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    margin-bottom: 10px;
+                }
+
+                .embed a {
+                    color: #0096cf;
+                }
+
+                .embed img.embed-thumb {
+                    max-height: 80px;
+                    max-width: 80px;
+                    border-radius: 3px;
+                    -ms-flex-negative: 0;
+                    flex-shrink: 0;
+                    width: auto;
+                    -o-object-fit: contain;
+                    object-fit: contain;
+                    margin-left: 20px;
+                }
+
+                .embed .embed-image{
+                    margin-bottom: 5px;
+                }
+
+                .embed .embed-image img{
+                    max-width: 400px !important;
+                }
+
+                .embed .embed-footer {
+                    font-size: 12px;
+                }
+
+                .embed .embed-footer span {
+                    color: rgba(255, 255, 255, 0.6);
+                }
+
+                .embed .embed-inner .embed-title {
+                    color: #fff;
+                }
+
+                .embed .embed-inner .embed-author {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-align: center;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    margin-bottom: 5px;
+                }
+
+                .embed .embed-inner .embed-author img.embed-author-icon, img.embed-footer-icon {
+                    margin-right: 9px;
+                    width: 20px;
+                    height: 20px;
+                    -o-object-fit: contain;
+                    object-fit: contain;
+                    border-radius: 50%;
+                }
+
+                .embed .embed-inner .embed-author .embed-author-name {
+                    display: inline-block;
+                    font-weight: 600;
+                    font-size: 14px;
+                    color: #fff !important;
+                }
+
+                .embed .embed-inner .fields {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -ms-flex-wrap: wrap;
+                    flex-wrap: wrap;
+                    -webkit-box-orient: horizontal;
+                    -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                    flex-direction: row;
+                    box-lines: miltiple;
+                    margin-top: -10px;
+                }
+
+                .embed .embed-inner .fields .field {
+                    -webkit-box-flex: 0;
+                    -ms-flex: 0;
+                    flex: 0;
+                    box-flex: 1;
+                    padding-top: 10px;
+                    max-width: 506px;
+                    min-width: 100%;
+                }
+
+                .embed .embed-inner .fields .field.inline {
+                    box-flex: 1;
+                    -webkit-box-flex: 1;
+                    -ms-flex: 1;
+                    flex: 1;
+                    min-width: 150px;
+                    -ms-flex-preferred-size: auto;
+                    flex-basis: auto;
+                }
+
+                .embed .embed-inner .fields .field .field-name {
+                    color: #fff;
+                    font-size: 14px;
+                    margin-bottom: 4px;
+                    font-weight: 600;
+                }
+
+                .embed .embed-inner .fields .field .field-value {
+                    color: rgba(255, 255, 255, 0.7);
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 1.1em;
+                    white-space: pre-wrap;
+                    margin-top: 6px;
+                    word-wrap: break-word;
+                }
+            </style>
+
+            <div class="col">
+                <div class="card-block preview">
+                    <div class="wrapper">
+                        <div class="side-colored"></div>
+                        <div class="card embed">
+                            <div class="card-block">
+                                <div class="embed-inner">
+                                    <div class="embed-author c-author"><img class="embed-author-icon"
+                                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/768px-Instagram_logo_2016.svg.png"><a
+                                            class="embed-author-name" href="https://google.nl"><span>Robin Kuiper</span></a></div>
+                                    <div class="embed-title"><a href="https://google.nl" class="c-title">Epic Title</a></div>
+                                    <div class="embed-description">
+                                        <p class="c-description">This is a beautiful embed!<br><br>Send one now!</p>
+                                    </div>
+                                    <div class="fields">
+                                        <!--<div class="field inline">
+                                            <div class="field-name">test</div>
+                                            <div class="field-value">
+                                                <p>test</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="field inline">
+                                            <div class="field-name">test</div>
+                                            <div class="field-value">
+                                                <p>test</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="field inline">
+                                            <div class="field-name">test</div>
+                                            <div class="field-value">
+                                                <p>test</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="field inline">
+                                            <div class="field-name">test</div>
+                                            <div class="field-value">
+                                                <p>test</p>
+                                            </div>
+                                        </div>-->
+                                    </div>
+                                </div>
+                                <img class="embed-thumb c-thumbnail"
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/768px-Instagram_logo_2016.svg.png"
+                                    style="height: 768px;">
+                            </div>
+                            <div class="embed-image"><img src="" class="c-image"></div>
+                            <div class="embed-footer"><span class="c-footer"><img class="embed-footer-icon"
+                                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/768px-Instagram_logo_2016.svg.png"><span>Lovely Footer!</span></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>

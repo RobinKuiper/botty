@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n00bster Bot - Web Interface | {{title}}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/3.2.0/css/bootstrap-colorpicker.css">
+    <link rel="stylesheet" href="css/main.css" />
+</head>
+
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">n00bster</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" href="#">...</a>
+            </li>
+        </ul>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/?token=123454">
+                                <span data-feather="home"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/messages?token=123454">
+                                <span data-feather="message-square"></span>
+                                Messages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/users?token=123454">
+                                <span data-feather="users"></span>
+                                Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/statistics?token=123454">
+                                <span data-feather="bar-chart-2"></span>
+                                Statistics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/modules?token=123454">
+                                <span data-feather="layers"></span>
+                                Modules
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!--<h6
+                        class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Saved reports</span>
+                        <a class="link-secondary" href="#" aria-label="Add a new report">
+                            <span data-feather="plus-circle"></span>
+                        </a>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file-text"></span>
+                                Current month
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file-text"></span>
+                                Last quarter
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file-text"></span>
+                                Social engagement
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file-text"></span>
+                                Year-end sale
+                            </a>
+                        </li>
+                    </ul>-->
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+                {{{body}}}
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/3.2.0/js/bootstrap-colorpicker.min.js"></script>
+    <script>
+        feather.replace();
+        $('#color').colorpicker({
+            format: 'auto'
+        });
+
+        $('#addField').on('click', addField);
+        $('#deleteField').on('click', deleteField);
+
+        let fields = 0;
+        function addField() {
+            fields++;
+            const field = `<div class="field"><div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="fieldtitle">Title</label>
+                            <input type="text" class="form-control" name="field[${fields}][title]" id="fieldtitle"
+                                placeholder="Title">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="fieldvalue">Value</label>
+                            <input type="text" class="form-control" name="field[${fields}][value]" id="fieldvalue"
+                                placeholder="Value">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="inline">
+                                Inline?
+                            </label>
+                            <br>
+                            <input type="checkbox" name="field[${fields}][inline]" id="inline">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <label for="inline">&nbsp;</label><br>
+                        <span name="deleteField" id="deleteField" class="btn btn-danger" role="button" onClick="deleteField(event)"><span data-feather="trash-2"></span></span>
+                    </div>
+                </div></div>`
+
+            $('#fields').append(field)
+            feather.replace();
+        }
+
+        function deleteField(e) {
+            fields--;
+            $(e.target).parents('.field')[0].remove();
+        }
+
+        let name = "Pieter Post";
+
+        function embedOnChange(e) {
+            const value = e.target.value;
+            const name = e.target.name;
+
+            console.log(name)
+
+            switch (name) {
+                case 'title': case 'description':
+                console.log("Changing Title");
+                    $(`.c-${name}`).html(value.replace(/(?:\r\n|\r|\n)/g, '<br>'));
+                    break;
+
+                case 'url':
+                    $(`.c-title`).attr("href",value);
+                break;
+
+                case 'thumbnail': case 'image':
+                    $(`.c-${name}`).attr("src",value);
+                    break;
+
+                case 'footertext':
+                    $(`.c-footer span`).html(value);
+                    break;
+
+                case 'footericon':
+                    $(`.c-footer img`).attr("src",value);
+                    break;
+
+                case 'authorname':
+                    $(`.c-author span`).html(value);
+                    break;
+
+                case 'authorurl':
+                    $(`.c-author a`).attr("href",value);
+                    break;
+
+                case 'authoricon':
+                    $(`.c-author img`).attr("src",value);
+                    break;
+
+                case 'image':
+                    $(`.c-image`).attr("src",value);
+                    break;
+
+                    case 'color':
+                    $(`.side-colored`).css('background-color', value);
+                    break;
+            }
+        }
+    </script>
+</body>
+
+</html>

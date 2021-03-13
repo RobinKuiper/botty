@@ -17,6 +17,8 @@
     "config": "^3.3.6",
     "discord.js": "^12.5.1",
     "eslint": "^7.21.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.2.1",
     "fs": "^0.0.1-security",
     "request": "^2.88.2",
     "sequelize": "^6.5.0",

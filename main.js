@@ -3,6 +3,8 @@ const logger = require("./logger");
 const config = require("config");
 const { Users } = require("./dbObjects");
 
+const WS = require("./ws/ws");
+
 const Discord = require("discord.js");
 const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
 
@@ -74,7 +76,7 @@ for (const file of eventFiles) {
     client.on(event.name, (...args) => event.execute(...args, client));
   }
 
-  client.log('info', `[Core Event] ${event.name} loaded.`);
+  client.log("info", `[Core Event] ${event.name} loaded.`);
 }
 
 // Load Core Commands
@@ -88,7 +90,7 @@ for (const folder of commandFolders) {
     const command = require(`./commands/${folder}/${file}`);
     client.commands.set(command.name, command);
 
-    client.log('info', `[Core Command] ${command.name} loaded.`);
+    client.log("info", `[Core Command] ${command.name} loaded.`);
   }
 }
 
@@ -96,19 +98,20 @@ for (const folder of commandFolders) {
 const moduleFolders = fs.readdirSync("./modules");
 let modules = getModules();
 for (const moduleFolder of moduleFolders) {
-  if(modules[moduleFolder] && modules[moduleFolder].disabled) continue;
+  if (modules[moduleFolder] && modules[moduleFolder].disabled) continue;
 
-  if(!modules[moduleFolder]){
+  if (!modules[moduleFolder]) {
     modules[moduleFolder] = {
       events: {},
       commands: {},
-      disabled: false
-    }
+      disabled: false,
+      description: ''
+    };
   }
 
   const modulePath = `./modules/${moduleFolder}`;
 
-  client.log('info', `[Module] Loading ${moduleFolder}.`);
+  client.log("info", `[Module] Loading ${moduleFolder}.`);
 
   // Load Module Events
   if (fs.existsSync(`${modulePath}/events`)) {
@@ -118,13 +121,17 @@ for (const moduleFolder of moduleFolders) {
     for (const eventFile of eventFiles) {
       const event = require(`${modulePath}/events/${eventFile}`);
 
-      if(modules[moduleFolder].events[event.name] && modules[moduleFolder].events[event.name].disabled) continue;
+      if (
+        modules[moduleFolder].events[event.name] &&
+        modules[moduleFolder].events[event.name].disabled
+      )
+        continue;
 
-      if(!modules[moduleFolder].events[event.name]){
+      if (!modules[moduleFolder].events[event.name]) {
         modules[moduleFolder].events[event.name] = {
           event: event.name,
-          disabled: false
-        }
+          disabled: false,
+        };
       }
 
       if (event.init && typeof event.init === "function") event.init(client);
@@ -134,7 +141,10 @@ for (const moduleFolder of moduleFolders) {
         client.on(event.name, (...args) => event.execute(...args, client));
       }
 
-      client.log('info', `[Module Event] ${moduleFolder} ${event.name} loaded.`);
+      client.log(
+        "info",
+        `[Module Event] ${moduleFolder} ${event.name} loaded.`
+      );
     }
   }
 
@@ -146,23 +156,30 @@ for (const moduleFolder of moduleFolders) {
     for (const commandFile of commandFiles) {
       const command = require(`${modulePath}/commands/${commandFile}`);
 
-      if(modules[moduleFolder].commands[command.name] && modules[moduleFolder].commands[command.name].disabled) continue;
+      if (
+        modules[moduleFolder].commands[command.name] &&
+        modules[moduleFolder].commands[command.name].disabled
+      )
+        continue;
 
-      if(!modules[moduleFolder].commands[command.name]){
+      if (!modules[moduleFolder].commands[command.name]) {
         modules[moduleFolder].commands[command.name] = {
           command: command.name,
-          disabled: false
-        }
+          disabled: false,
+        };
       }
 
       client.commands.set(command.name, command);
 
-      client.log('info', `[Module Command] ${moduleFolder} ${command.name} loaded.`);
+      client.log(
+        "info",
+        `[Module Command] ${moduleFolder} ${command.name} loaded.`
+      );
     }
   }
 }
 
-fs.writeFileSync('config/modules.json', JSON.stringify(modules));
+fs.writeFileSync("config/modules.json", JSON.stringify(modules));
 
 if (!config.has("token") || !config.get("token")) {
   client.log(
@@ -171,9 +188,12 @@ if (!config.has("token") || !config.get("token")) {
   );
 } else client.login(config.get("token"));
 
+// TODO: To client ready...
+const ws = new WS("123454", 4000, client);
+
 function getModules() {
-  if (fs.existsSync('config/modules.json')) {
-    return JSON.parse(fs.readFileSync('config/modules.json'));
+  if (fs.existsSync("config/modules.json")) {
+    return JSON.parse(fs.readFileSync("config/modules.json"));
   }
 
   return {};
