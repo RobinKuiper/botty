@@ -52,7 +52,7 @@ module.exports = {
 
     if (subscriptions && subscriptions.length > 0) {
       for (let i = 0; i < subscriptions.length; i++) {
-        let guild = client.guilds.cache.get(subscriptions[i].guildid);
+        let guild = client.bot.guilds.cache.get(subscriptions[i].guildid);
         let channel = guild.channels.cache.get(subscriptions[i].channelid);
         subscribe(subscriptions[i].twitchname, channel, client);
 
