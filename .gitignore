@@ -7,3 +7,4 @@ config.json
 /config/modules.json
 /modules/voicecloner/channels.json
 /modules/minecraft/servers.json
+/modules/foundry/games.json
