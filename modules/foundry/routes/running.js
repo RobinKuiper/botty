@@ -21,7 +21,7 @@ module.exports = {
 
       return fs.writeFileSync(
         "modules/foundry/games.json",
-        JSON.stringify(games)
+        JSON.stringify(games, null, 4)
       );
     }
 

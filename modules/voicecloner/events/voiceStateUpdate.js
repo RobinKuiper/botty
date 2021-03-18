@@ -41,7 +41,7 @@ module.exports = {
             this.channels[channel.id].clones.push(ch.id);
             this.channels[ch.id] = channel.id;
 
-            fs.writeFileSync(this.file, JSON.stringify(this.channels));
+            fs.writeFileSync(this.file, JSON.stringify(this.channels, null, 4));
           });
       }
     }
@@ -81,7 +81,7 @@ module.exports = {
       }
 
       // Write back to file
-      fs.writeFileSync(this.file, JSON.stringify(this.channels));
+      fs.writeFileSync(this.file, JSON.stringify(this.channels, null, 4));
     }
   },
   getChannelsFromFile(file) {

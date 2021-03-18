@@ -116,7 +116,7 @@ for (const moduleName of moduleFolders) {
 // Write modules to disk.
 fs.writeFileSync(
   path.join(folders.config, "modules.json"),
-  JSON.stringify(modules)
+  JSON.stringify(modules, null, 4)
 );
 // Add modules to client object.
 client.modules = removeDisabled(modules);

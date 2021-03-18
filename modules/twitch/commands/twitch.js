@@ -84,7 +84,7 @@ module.exports = {
           guildid: message.channel.guild.id,
           channelid: channel.id,
         });
-        fs.writeFileSync(twitch_user_file, JSON.stringify(subscriptions));
+        fs.writeFileSync(twitch_user_file, JSON.stringify(subscriptions, null, 4));
 
         message.channel.send(
           `You are now subscribed to \`${twitchname}\` in <#${channel.id}>.`
@@ -97,7 +97,7 @@ module.exports = {
         subscriptions = getSubscriptions() || [];
         subscriptions.filter((u) => u.twitchname !== twitchname);
 
-        fs.writeFileSync(twitch_user_file, JSON.stringify(subscriptions));
+        fs.writeFileSync(twitch_user_file, JSON.stringify(subscriptions, null, 4));
 
         message.channel.send(`You have unsubscribed from \`${twitchname}\`.`);
         break;

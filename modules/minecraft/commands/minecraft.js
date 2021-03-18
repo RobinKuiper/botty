@@ -60,7 +60,7 @@ module.exports = {
         }
       }
 
-      fs.writeFileSync(servers_file, JSON.stringify(JSONservers));
+      fs.writeFileSync(servers_file, JSON.stringify(JSONservers, null, 4));
     });
 
     setInterval(() => {
