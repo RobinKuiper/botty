@@ -17,6 +17,8 @@ module.exports = {
         channel: "",
         guild: "",
         embed: {},
+        last_announced: null,
+        announce: false
       };
 
       return fs.writeFileSync(
@@ -26,6 +28,14 @@ module.exports = {
     }
 
     const game = games[name];
+
+    if(!game.announce) return client.info('We don\'t want to announce this game.');
+
+    if(game.last_announced && Date.now() - game.last_announced <= 3 * 60 * 60 * 1000) return client.info('We have announced this already.');
+
+    games[name].last_announced = Date.now();
+
+    fs.writeFileSync("modules/foundry/games.json", JSON.stringify(games, null, 4));
 
     let embed = {
       color: "#C4530E",

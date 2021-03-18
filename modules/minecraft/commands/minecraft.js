@@ -141,7 +141,7 @@ module.exports = {
             let member = message.channel.guild.members.cache.get(
               message.author.id
             );
-            sendServerInfo(server, message, hasRole(server, member));
+            sendServerInfo(server, message, hasRole(server, member), client);
 
             return;
           });
@@ -190,7 +190,7 @@ module.exports = {
               let member = message.channel.guild.members.cache.get(
                 message.author.id
               );
-              sendServerInfo(server, message, hasRole(server, member));
+              sendServerInfo(server, message, hasRole(server, member), client);
             });
 
             for (let i = 0; i < servers.length; i++) {
@@ -394,7 +394,7 @@ function postServerCommand(command, server, message) {
   });
 }
 
-function sendServerInfo(server, message, hasRole = false) {
+function sendServerInfo(server, message, hasRole = false, client) {
   let JSONserver = getServerFromFileById(server.id);
 
   let description = `

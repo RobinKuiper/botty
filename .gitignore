@@ -4,4 +4,6 @@ config.json
 /data/database.sqlite
 /config/development.json
 /config/production.json
+/config/modules.json
 /modules/voicecloner/channels.json
+/modules/minecraft/servers.json
