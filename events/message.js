@@ -9,7 +9,7 @@ module.exports = {
     prefix = client.config.get('prefix') || prefix;
 },
   execute(message, client) {
-    if (!message.author.bot) {
+    /*if (!message.author.bot) {
       client.userList.addExperience(message.author.id, 1)
         .then(levelUp => {
           if (levelUp) {
@@ -20,11 +20,12 @@ module.exports = {
             message.channel.send(levelUpEmbed);
           }
         });
-    }
+    }*/
 
     client.log('info',
       `${message.author.tag} in #${message.channel.name} sent: ${message.content}`
     );
+    
     client.log('info', `Guild ID: ${message.channel.guild.id}`)
     client.log('info', `Channel ID: ${message.channel.id}`)
 

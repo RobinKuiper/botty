@@ -1,0 +1,11 @@
+{
+    "name": "voicecloner",
+    "title": "Voice Channel Cloner",
+    "description": "Clone voice channels.",
+    "category": "fun",
+    "author": {
+        "name": "Robin Kuiper",
+        "url": "https://robinkuiper.eu"
+    },
+    "url": "https://robinkuiper.eu"
+}

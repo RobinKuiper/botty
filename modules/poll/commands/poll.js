@@ -1,12 +1,11 @@
 const EMOJI = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
-const colors = require("../../../colors.json");
 
 module.exports = {
   name: "poll",
   description: "Create a poll!",
   aliases: [],
   category: "fun",
-  image: 'https://i.imgur.com/bKWLVOk.png',
+  image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Ballot_box_icon_color.svg/1200px-Ballot_box_icon_color.svg.png',
   args: true,
   usage: [
       "question",
@@ -14,7 +13,7 @@ module.exports = {
   ],
   guildOnly: true,
   cooldown: 5,
-  async execute(message, args) {
+  async execute(message, args, client) {
     const channel = message.mentions.channels.first() || message.channel;
 
     const content = args.join(" "); //.splice(args.indexOf(`#${channel.name}`), 1)
@@ -25,16 +24,19 @@ module.exports = {
 
     let description = "";
     if (multiple) {
-      question = question[0].replace(/\{(.*?)\}/gm, "$1");
-      for(let i = 0; i < answers.length; i++){
-          description += `${EMOJI[i]} ${answers[i].replace(/\[(.*?)\]/gm, "$1")}\n`
-      }
-    } else question = content.replace(/<(.*?)> /gm, "");
+      description += `**${question[0].replace(/\{(.*?)\}/gm, "$1")}**\n`;
+      description += answers.map((answer, key) => `${EMOJI[key]} ${answer.replace(/\[(.*?)\]/gm, "$1")}`).join('\n');
+    } else description = `**${content.replace(/<(.*?)> /gm, "")}**`;
 
     const embed = {
-      color: colors[Math.floor(Math.random()*colors.length)].hex,
-
-      title: `__${question}__`,
+      color: client.colors[Math.floor(Math.random()*client.colors.length)].hex,
+      footer: {
+        text: ''
+      },
+      title: "New Poll",
+      thumbnail: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Ballot_box_icon_color.svg/1200px-Ballot_box_icon_color.svg.png"
+      },
       description,
     };
 

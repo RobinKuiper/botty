@@ -3,8 +3,6 @@ const { ApiClient } = require("twitch");
 const { ClientCredentialsAuthProvider } = require("twitch-auth");
 const { WebHookListener, SimpleAdapter } = require("twitch-webhooks");
 
-const colors = require("../../../colors.json");
-
 const twitch_user_file = "data/twitch_subscriptions.json";
 
 let apiClient = null;
@@ -25,7 +23,7 @@ module.exports = {
   guildOnly: false,
   cooldown: 5,
   async init(client) {
-    client.log("info", "Initializing Twitch.");
+    client.info(`[${this.name}] Initializing.`);
 
     if(!checkConfig(client)) {
       disabled = true;
@@ -147,7 +145,7 @@ async function subscribe(twitchname, channel, client) {
           stream.getGame().then((game) => {
             stream.getUser().then((user) => {
               const embed = {
-                color: colors[Math.floor(Math.random() * colors.length)].hex,
+                color: client.colors[Math.floor(Math.random() * client.colors.length)].hex,
                 title: `${stream.title}`,
                 url: `https://twitch.tv/${stream.userDisplayName}`,
                 author: {

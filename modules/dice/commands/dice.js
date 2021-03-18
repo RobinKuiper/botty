@@ -1,5 +1,3 @@
-const colors = require("../../../colors.json");
-
 module.exports = {
     name: 'dice',
     description: 'Roll your dice!',
@@ -10,7 +8,7 @@ module.exports = {
     usage: "1d6+4",
     guildOnly: false,
     cooldown: 0,
-    execute(message, args) {
+    execute(message, args, client) {
         const die = getDie(args[0].toLowerCase());
 
         const rolls = [];
@@ -23,7 +21,7 @@ module.exports = {
         const description = `**Rolls:** ${rolls.join(", ")}`;
 
         const embed = {
-            color: colors[Math.floor(Math.random()*colors.length)].hex,
+            color: client.colors[Math.floor(Math.random()*client.colors.length)].hex,
             title: `🎲 __${sum}__ 🎲`,
             description,
             footer: {

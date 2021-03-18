@@ -1,200 +1,146 @@
 const fs = require("fs");
+const path = require("path");
+const folders = require("./data/folders");
 const logger = require("./logger");
 const config = require("config");
-const { Users } = require("./dbObjects");
 
-const WS = require("./ws/ws");
+const Bot = require("./bot/bot");
 
-const Discord = require("discord.js");
-const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
+const client = {};
 
+client.colors = require("./data/colors.json");
+client.folders = folders;
 client.config = config;
 
+/** Logger */
 client.log = (type, message) => logger.log(type, message);
-client.log("info", `Environment: ${process.env.NODE_ENV}`);
+client.info = (message) => client.log("info", message);
+client.error = (message) => client.log("error", message);
+client.warn = (message) => client.log("warn", message);
 
-client.cooldowns = new Discord.Collection();
-client.commands = new Discord.Collection();
+client.info(`ENVIRONMENT: ${process.env.NODE_ENV}`);
 
-client.userList = new Discord.Collection();
+/** Load Modules */
+const modules = getModulesFromJSON();
+const moduleFolders = fs.readdirSync(folders.modules);
+// Loop through module folder.
+for (const moduleName of moduleFolders) {
+  const moduleFolder = path.join(folders.modules, moduleName);
 
-function calcLevel(xp) {
-  return Math.floor(Math.sqrt(310 + 100 * (xp * 10) - 25) / 50);
-}
-
-Reflect.defineProperty(client.userList, "addExperience", {
-  /* eslint-disable-next-line func-name-matching */
-  value: async function add(id, amount) {
-    const user = client.userList.get(id);
-    if (user) {
-      let levelUp = false;
-      user.experience += Number(amount);
-
-      // Level Up?
-      if (calcLevel(user.experience) > user.level) {
-        user.level = calcLevel(user.experience);
-        levelUp = true;
-      }
-
-      user.save();
-
-      return levelUp;
-    }
-    const newUser = await Users.create({ user_id: id, experience: amount });
-    client.userList.set(id, newUser);
-    return newUser;
-  },
-});
-
-Reflect.defineProperty(client.userList, "getExperience", {
-  /* eslint-disable-next-line func-name-matching */
-  value: function getExperience(id) {
-    const user = client.userList.get(id);
-    return user ? user.experience : 0;
-  },
-});
-
-Reflect.defineProperty(client.userList, "getLevel", {
-  /* eslint-disable-next-line func-name-matching */
-  value: function getLevel(id) {
-    const experience = client.userList.getExperience(id);
-    return calcLevel(experience);
-  },
-});
-
-// Load Core Events
-const eventFiles = fs
-  .readdirSync("./events")
-  .filter((file) => file.endsWith(".js"));
-
-for (const file of eventFiles) {
-  const event = require(`./events/${file}`);
-  if (event.init && typeof event.init === "function") event.init(client);
-  if (event.once) {
-    client.once(event.name, (...args) => event.execute(...args, client));
-  } else {
-    client.on(event.name, (...args) => event.execute(...args, client));
+  // Check if module has a module.json file.
+  if (!fs.existsSync(path.join(moduleFolder, "module.json"))) {
+    client.warn(`Module ${moduleName} does not have a module.json`);
+    continue;
   }
 
-  client.log("info", `[Core Event] ${event.name} loaded.`);
-}
+  const module = require(path.join(moduleFolder, "module.json"));
 
-// Load Core Commands
-const commandFolders = fs.readdirSync("./commands");
-
-for (const folder of commandFolders) {
-  const commandFiles = fs
-    .readdirSync(`./commands/${folder}`)
-    .filter((file) => file.endsWith(".js"));
-  for (const file of commandFiles) {
-    const command = require(`./commands/${folder}/${file}`);
-    client.commands.set(command.name, command);
-
-    client.log("info", `[Core Command] ${command.name} loaded.`);
-  }
-}
-
-// Load Modules
-const moduleFolders = fs.readdirSync("./modules");
-let modules = getModules();
-for (const moduleFolder of moduleFolders) {
-  if (modules[moduleFolder] && modules[moduleFolder].disabled) continue;
-
+  // If module is not in module.json file, add it.
   if (!modules[moduleFolder]) {
-    modules[moduleFolder] = {
+    modules[module.name] = module;
+    modules[module.name] = Object.assign(modules[module.name], {
+        name: module.name,
       events: {},
       commands: {},
+      routes: {},
       disabled: false,
-      description: ''
-    };
+    });
   }
 
-  const modulePath = `./modules/${moduleFolder}`;
-
-  client.log("info", `[Module] Loading ${moduleFolder}.`);
-
-  // Load Module Events
-  if (fs.existsSync(`${modulePath}/events`)) {
-    const eventFiles = fs
-      .readdirSync(`${modulePath}/events`)
+  // Load Events
+  const eventFolder = path.join(moduleFolder, "events");
+  if (fs.existsSync(eventFolder)) {
+    const events = fs
+      .readdirSync(eventFolder)
       .filter((file) => file.endsWith(".js"));
-    for (const eventFile of eventFiles) {
-      const event = require(`${modulePath}/events/${eventFile}`);
+    for (const eventsFile of events) {
+      const event = require(path.join(eventFolder, eventsFile));
 
-      if (
-        modules[moduleFolder].events[event.name] &&
-        modules[moduleFolder].events[event.name].disabled
-      )
-        continue;
-
-      if (!modules[moduleFolder].events[event.name]) {
-        modules[moduleFolder].events[event.name] = {
-          event: event.name,
-          disabled: false,
-        };
+      if(!modules[module.name].events[event.name]){
+        modules[module.name].events[event.name] = {
+            name: event.name,
+            disabled: false,
+            once: event.once,
+            file: eventsFile
+        }
       }
-
-      if (event.init && typeof event.init === "function") event.init(client);
-      if (event.once) {
-        client.once(event.name, (...args) => event.execute(...args, client));
-      } else {
-        client.on(event.name, (...args) => event.execute(...args, client));
-      }
-
-      client.log(
-        "info",
-        `[Module Event] ${moduleFolder} ${event.name} loaded.`
-      );
     }
   }
 
-  // Load Module Commands
-  if (fs.existsSync(`${modulePath}/commands`)) {
-    const commandFiles = fs
-      .readdirSync(`${modulePath}/commands`)
+  // Load Commands
+  const commandFolder = path.join(moduleFolder, "commands");
+  if (fs.existsSync(commandFolder)) {
+    const commands = fs
+      .readdirSync(commandFolder)
       .filter((file) => file.endsWith(".js"));
-    for (const commandFile of commandFiles) {
-      const command = require(`${modulePath}/commands/${commandFile}`);
+    for (const commandsFile of commands) {
+      const command = require(path.join(commandFolder, commandsFile));
 
-      if (
-        modules[moduleFolder].commands[command.name] &&
-        modules[moduleFolder].commands[command.name].disabled
-      )
-        continue;
-
-      if (!modules[moduleFolder].commands[command.name]) {
-        modules[moduleFolder].commands[command.name] = {
-          command: command.name,
-          disabled: false,
-        };
+      if(!modules[module.name].commands[command.name]){
+        modules[module.name].commands[command.name] = {
+            name: command.name,
+            disabled: false,
+            file: commandsFile
+        }
       }
-
-      client.commands.set(command.name, command);
-
-      client.log(
-        "info",
-        `[Module Command] ${moduleFolder} ${command.name} loaded.`
-      );
     }
+  }
+
+    // Load Routes
+    const routeFolder = path.join(moduleFolder, "routes");
+    if (fs.existsSync(routeFolder)) {
+      const routes = fs
+        .readdirSync(routeFolder)
+        .filter((file) => file.endsWith(".js"));
+      for (const routesFile of routes) {
+        const route = require(path.join(routeFolder, routesFile));
+  
+        if(!modules[module.name].routes[route.name]){
+          modules[module.name].routes[route.route] = {
+              route: route.route,
+              type: route.type,
+              disabled: false,
+              file: routesFile
+          }
+        }
+      }
+    }
+
+  // Check if module is disabled.
+  if (module.disabled) {
+    client.info(`Module ${module.name} is disabled, not loading.`);
+    continue;
   }
 }
 
-fs.writeFileSync("config/modules.json", JSON.stringify(modules));
+// Write modules to disk.
+fs.writeFileSync(
+  path.join(folders.config, "modules.json"),
+  JSON.stringify(modules)
+);
+// Add modules to client object.
+client.modules = removeDisabled(modules);
+client.modules.events = removeDisabled(modules.events);
+client.modules.commands = removeDisabled(modules.commands);
+client.modules.routes = removeDisabled(modules.routes);
 
-if (!config.has("token") || !config.get("token")) {
-  client.log(
-    "error",
-    "You have not provided a Discord bot token in the config files."
-  );
-} else client.login(config.get("token"));
+// Initialize Bot
+new Bot(client);
 
-// TODO: To client ready...
-const ws = new WS("123454", 4000, client);
-
-function getModules() {
-  if (fs.existsSync("config/modules.json")) {
-    return JSON.parse(fs.readFileSync("config/modules.json"));
+function getModulesFromJSON() {
+  if (fs.existsSync(`${folders.config}/modules.json`)) {
+    return JSON.parse(fs.readFileSync(`${folders.config}/modules.json`));
   }
 
   return {};
+}
+
+function removeDisabled(obj) {
+  let result = {};
+
+  for (let key in obj) {
+    if (obj[key] && !obj[key].disabled) result[key] = obj[key];
+  }
+
+  return result;
 }

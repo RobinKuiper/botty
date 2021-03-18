@@ -3,7 +3,6 @@
 /* eslint-disable no-case-declarations */
 const fs = require("fs");
 const request = require("request");
-const colors = require("../../../colors.json");
 
 const EMOJI = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
 
@@ -25,7 +24,7 @@ module.exports = {
   guildOnly: true,
   cooldown: 5,
   init(client) {
-    client.log("info", "Initializing Minecraft.");
+    client.info(`[${this.name}] Initializing.`);
 
     if (!checkConfig(client)) {
       disabled = true;
@@ -112,7 +111,7 @@ module.exports = {
       }
     }, 1000 * 60 * 30);
   },
-  execute(message, args) {
+  execute(message, args, client) {
     if (disabled) return;
 
     let serverName = args[1] ? args[1].toLowerCase() : "";
@@ -164,7 +163,7 @@ module.exports = {
         }
 
         const minecraftEmbed = {
-          color: colors[Math.floor(Math.random() * colors.length)].hex,
+          color: client.colors[Math.floor(Math.random() * client.colors.length)].hex,
           title: "__Minecraft Server Status__",
           description,
           timestamp: new Date(),
@@ -406,7 +405,7 @@ function sendServerInfo(server, message, hasRole = false) {
                     `;
 
   const minecraftEmbed = {
-    color: colors[Math.floor(Math.random() * colors.length)].hex,
+    color: client.colors[Math.floor(Math.random() * client.colors.length)].hex,
     title: `${server.server_running ? "🟢" : "🔴"} __${
       server.name
     } Server Status__`,

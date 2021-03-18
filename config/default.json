@@ -1,7 +1,6 @@
 {
     "prefix": "!",
     "token": "DISCORD BOT TOKEN",
-    "mainChannel": "MAIN VOICE CHANNEL",
     "username": "n00bster",
     "state": "online",
     "activity": "Serving You!",

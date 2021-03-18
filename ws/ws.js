@@ -4,8 +4,19 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
 
+// Routes
+const admin = require("./routes/admin");
+const messages = require("./routes/messages");
+
 class WebSocket {
   constructor(token, port, client) {
+    this.folders = {
+      modules: path.join(__dirname, '../modules'),
+      events: path.join(__dirname, '../events'),
+      commands: path.join(__dirname, '../commands'),
+      config: path.join(__dirname, '../config')
+    };
+
     this.token = token;
     this.client = client;
 
@@ -27,158 +38,103 @@ class WebSocket {
     this.app.use(express.static(path.join(__dirname, "public")));
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());
+    this.app.use((req, res, next) => {
+      var _token = req.body.token || req.query.token;
+
+      if (!this.checkToken(_token))
+        return res.render("error", {
+          title: "Error",
+          error: "Invalid Token",
+          layout: "error",
+        });
+
+      next();
+    });
 
     this.registerRoutes();
 
-    this.app.use(function(req, res, next){
-        res.status(404);
-      
-        // respond with html page
-        if (req.accepts('html')) {
-          res.render('404', { url: req.url });
-          return;
-        }
-      
-        // respond with json
-        if (req.accepts('json')) {
-          res.send({ error: 'Not found' });
-          return;
-        }
-      
-        // default to plain-text. send()
-        res.type('txt').send('Not found');
-      });
+    this.app.use(function (req, res, next) {
+      res.status(404);
+
+      // respond with html page
+      if (req.accepts("html")) {
+        res.render("404", { url: req.url });
+        return;
+      }
+
+      // respond with json
+      if (req.accepts("json")) {
+        res.send({ error: "Not found" });
+        return;
+      }
+
+      // default to plain-text. send()
+      res.type("txt").send("Not found");
+    });
 
     this.server = this.app.listen(port, () => {
-      console.log(`Websocket listening on port ${this.server.address().port}`);
+      this.client.info(`***************************************`);
+      this.client.info(`*         Webserver Running.          *`);
+      this.client.info(`*         Port ${this.server.address().port}                   *`);
+      this.client.info(`*         Token ${this.token}                *`);
+      this.client.info(`***************************************`);
     });
-  }
-
-  checkToken(_token) {
-    return _token == this.token;
   }
 
   registerRoutes() {
     this.app.get("/", (req, res) => {
-      var _token = req.query.token;
-
-      if (!this.checkToken(_token))
-        return res.render("error", { title: "Error", error: "Invalid Token", layout: "error" });
-
-      const channels = [];
-      this.client.guilds.cache
-        .first()
-        .channels.cache.filter((c) => c.type === "text")
-        .forEach((c) => {
-          channels.push({ id: c.id, name: c.name });
-        });
-
-      let modules = null;
-
-      if (fs.existsSync("config/modules.json"))
-        modules = JSON.parse(fs.readFileSync("config/modules.json"));
-
-      res.render("index", { title: "", token: _token, channels, modules });
+      admin.index(req, res, this.client);
     });
 
     this.app.get("/messages", (req, res) => {
-      var _token = req.query.token;
-
-      if (!this.checkToken(_token))
-        return res.render("error", { title: "Error", error: "Invalid Token" });
-
-      const channels = [];
-      this.client.guilds.cache
-        .first()
-        .channels.cache.filter((c) => c.type === "text")
-        .forEach((c) => {
-          channels.push({ id: c.id, name: c.name });
-        });
-
-      res.render("messages", { title: "Messages", token: _token, channels });
+      messages.page(req, res, this.client);
     });
 
     this.app.post("/sendMessage", (req, res) => {
-      var _token = req.body.token;
-      var message = req.body.message;
-      var channelid = req.body.channelid;
-
-      if (!this.checkToken(_token)) return;
-
-      const channel = this.client.guilds.cache
-        .first()
-        .channels.cache.get(channelid);
-      if (channel) {
-        channel.send(message);
-      }
+      messages.sendNormalMessage(req, res, this.client)
     });
 
     this.app.post("/sendEmbed", (req, res) => {
-      const {
-        token,
-        title,
-        description,
-        thumbnail,
-        footertext,
-        authorname,
-        authorurl,
-        authoricon,
-        image,
-        footericon,
-        channelid,
-        color
-      } = req.body;
-
-      const fields = [];
-      let loop = true;
-      let i = 0;
-      while(loop){
-        if(req.body[`field[${i}][title]`]){
-            fields.push({
-                name: req.body['field[0][title]'],
-                value: req.body['field[0][value]'],
-                inline: req.body['field[0][inline]'] === 'checked' ? true : false
-            })
-            i++;
-        }else{
-            loop = false;
-            break;
-        }
-      }
-
-      console.log(fields);
-
-      if (!this.checkToken(token)) return;
-
-      const embed = {
-          color,
-        title,
-        description,
-        fields,
-        author: {
-          name: authorname,
-          url: authorurl,
-          icon_url: authoricon,
-        },
-        thumbnail: {
-          url: thumbnail,
-        },
-        footer: {
-          text: footertext,
-          icon_url: footericon,
-        },
-        image: {
-            url: image
-        },
-      };
-
-      const channel = this.client.guilds.cache
-        .first()
-        .channels.cache.get(channelid);
-      if (channel) {
-        channel.send({ embed });
-      }
+      messages.sendEmbedMessage(req, res, this.client);
     });
+
+    this.registerModuleRoutes();
+  }
+
+  registerModuleRoutes(){
+    for (let moduleName in this.client.modules) {
+      const modulePath = path.join(this.client.folders.modules, moduleName);
+      const routesPath = path.join(modulePath, "routes");
+
+      const module = this.client.modules[moduleName];
+
+      // Routes
+      for (const routesName in module.routes) {
+        const route = require(path.join(
+          routesPath,
+          module.routes[routesName].file
+        ));
+
+        if(route.type === 'post'){
+          this.app.post(`/${module.name}/${route.route}`, (req, res) => {
+            route.execute(req, res, this.client);
+          })
+        }else if(route.type === 'get'){
+          this.app.get(`/${module.name}/${route.route}`, (req, res) => {
+            route.execute(req, res, this.client);
+          })
+        }
+
+        this.client.log(
+          "info",
+          `[Module Route] ${module.name} ${route.route} loaded.`
+        );
+      }
+    }
+  }
+
+  checkToken(_token) {
+    return _token == this.token;
   }
 }
 

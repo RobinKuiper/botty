@@ -1,0 +1,11 @@
+{
+    "name": "dice",
+    "title": "Dice Roller",
+    "description": "Roll some dice!",
+    "category": "fun",
+    "author": {
+        "name": "Robin Kuiper",
+        "url": "https://robinkuiper.eu"
+    },
+    "url": "https://robinkuiper.eu"
+}

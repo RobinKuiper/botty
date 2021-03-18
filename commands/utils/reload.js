@@ -4,7 +4,7 @@ module.exports = {
 	name: 'reload',
     description: 'Reloads a command',
     inHelp: false,
-	execute(message, args) {
+	execute(message, args, client) {
 
         const commandFolders = fs.readdirSync('./commands');
         
@@ -16,8 +16,8 @@ module.exports = {
             reloadCommands(message, commandFolders);
         }else{
             const commandName = args[0].toLowerCase();
-            const command = message.client.commands.get(commandName)
-                || message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+            const command = client.commands.get(commandName)
+                || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
             if (!command) return message.channel.send(`There is no command with name or alias \`${commandName}\`, ${message.author}!`);
 
@@ -27,7 +27,7 @@ module.exports = {
 
             try {
                 const newCommand = require(`../${folderName}/${command.name}.js`);
-                message.client.commands.set(newCommand.name, newCommand);
+                client.commands.set(newCommand.name, newCommand);
                 message.channel.send(`Command \`${command.name}\` was reloaded!`);
             } catch (error) {
                 console.error(error);
@@ -46,7 +46,7 @@ function reloadCommands(message, commandFolders){
 
             try{
                 const command = require(`../${folder}/${file}`);
-                message.client.commands.set(command.name, command);
+                client.commands.set(command.name, command);
                 message.channel.send(`Command \`${command.name}\` was reloaded!`);
             }catch(error){
                 console.error(error);
@@ -63,7 +63,7 @@ function reloadEvents(message){
 
             try{
                 const event = require(`../../events/${file}`);
-                message.client.commands.set(event.name, event);
+                client.commands.set(event.name, event);
                 message.channel.send(`Event \`${event.name}\` was reloaded!`);
             }catch(error){
                 console.error(error);

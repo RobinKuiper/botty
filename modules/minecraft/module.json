@@ -1,0 +1,11 @@
+{
+    "name": "minecraft",
+    "title": "Minecraft (Crafty) Communicator.",
+    "description": "Minecraft Server Handler",
+    "category": "games",
+    "author": {
+        "name": "Robin Kuiper",
+        "url": "https://robinkuiper.eu"
+    },
+    "url": "https://robinkuiper.eu"
+}

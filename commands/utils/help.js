@@ -1,5 +1,3 @@
-const colors = require('../../colors.json');
-
 let prefix = '!';
 
 module.exports = {
@@ -12,9 +10,8 @@ module.exports = {
     init(client){
         prefix = client.config.get('prefix') || prefix;
     },
-    execute(message, args){
-        const data = [];
-        const { commands } = message.client;
+    execute(message, args, client){
+        const { commands } = client;
         
         if(!args.length){
 
@@ -23,7 +20,7 @@ module.exports = {
         `
 
         const embed = {
-            color: colors[Math.floor(Math.random()*colors.length)].hex,
+            color: client.colors[Math.floor(Math.random()*client.colors.length)].hex,
             title: `__Commands__`,
             description,
             thumbnail: {
@@ -69,7 +66,7 @@ module.exports = {
         description += `**Cooldown:** *${command.cooldown || 3} second(s)*`;
 
         const embed = {
-            color: colors[Math.floor(Math.random()*colors.length)].hex,
+            color: client.colors[Math.floor(Math.random()*client.colors.length)].hex,
             title: `__Help: ${command.name.charAt(0).toUpperCase() + command.name.slice(1)}__`,
             description,
             thumbnail: {

@@ -1,0 +1,11 @@
+{
+    "name": "poll",
+    "title": "Poll System",
+    "description": "Create polls.",
+    "category": "fun",
+    "author": {
+        "name": "Robin Kuiper",
+        "url": "https://robinkuiper.eu"
+    },
+    "url": "https://robinkuiper.eu"
+}
