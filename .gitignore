@@ -1,6 +1,6 @@
 node_modules
 config.json
 /logs
-/data
+/data/database.sqlite
 /config/development.json
 /config/production.json
