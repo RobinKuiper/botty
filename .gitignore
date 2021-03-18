@@ -4,3 +4,4 @@ config.json
 /data/database.sqlite
 /config/development.json
 /config/production.json
+/modules/voicecloner/channels.json
