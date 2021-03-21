@@ -95,7 +95,9 @@ module.exports = {
   execute(message, args, client) {
     const results = this.fuse.search(args.join(" "));
 
-    if (results[0].score <= 0.1) {
+    if(!results.length) return message.reply('Nothing found...');
+
+    if (results[0].score <= 0.01 || results.length === 1) {
       const spell = results[0].item;
 
       this.sendSpell(spell, message, client);
