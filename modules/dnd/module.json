@@ -1,7 +1,7 @@
 {
-    "name": "dice",
-    "title": "Dice Roller",
-    "description": "Roll some dice!",
+    "name": "dnd",
+    "title": "DND Tools",
+    "description": "Tools for Dungeons and Dragons",
     "category": "fun",
     "author": {
         "name": "Robin Kuiper",
