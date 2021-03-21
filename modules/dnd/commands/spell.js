@@ -106,7 +106,10 @@ module.exports = {
         color:
           client.colors[Math.floor(Math.random() * client.colors.length)].hex,
         title: `Which one are you looking for?`,
-        description: results.map((r, i) => `${EMOJI[i]} ${r.item.name}`).join('\n'),
+        description: results.map((r, i) => {
+          if(i < 7)
+          return `${EMOJI[i]} ${r.item.name}`
+        }).join('\n'),
       };
 
       return message.reply({ embed }).then(async (m) => {
