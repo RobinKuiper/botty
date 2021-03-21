@@ -197,9 +197,7 @@ module.exports = {
           },
           {
             name: "Components",
-            value: `${spell.components.v && "V"} ${spell.components.s && "S"} ${
-              spell.components.m && `M (${spell.components.m})`
-            }}`,
+            value: `${spell.components.v ? "V" : ''} ${spell.components.s ? "S" : ''} ${spell.components.m ? `M (${spell.components.m})}` : ''}`,
             inline: true,
           },
         ],
