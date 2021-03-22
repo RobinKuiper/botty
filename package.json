@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "set NODE_ENV=development&& pm2 start ecosystem.config.js --watch && pm2 logs",
-    "start": "export NODE_ENV=production && pm2 start ecosystem.config.js",
+    "start": "export NODE_ENV=production && pm2 start ecosystem.config.js && pm2 logs",
     "restart": "pm2 restart ecosystem.config.js && pm2 logs",
     "stop": "pm2 stop all",
     "lint": "eslint ."
