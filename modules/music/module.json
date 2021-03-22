@@ -1,0 +1,12 @@
+{
+    "name": "music",
+    "title": "Test Module",
+    "description": "Module for testing",
+    "category": "fun",
+    "author": {
+        "name": "Robin Kuiper",
+        "url": "https://robinkuiper.eu"
+    },
+    "url": "https://robinkuiper.eu",
+    "init": true
+}

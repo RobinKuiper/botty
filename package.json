@@ -16,9 +16,11 @@
   "dependencies": {
     "config": "^3.3.6",
     "discord.js": "^12.5.1",
+    "distube": "^2.8.12",
     "eslint": "^7.21.0",
     "express": "^4.17.1",
     "express-handlebars": "^5.2.1",
+    "ffmpeg-static": "^4.2.8",
     "fs": "^0.0.1-security",
     "fuse.js": "^6.4.6",
     "request": "^2.88.2",
