@@ -20,14 +20,14 @@ class init {
 
     client.music
       .on("playSong", (message, queue, song) => {
-        this.announceSong(client, message, song, '🎶 Now Playing 🎶');
+        this.announceSong(client, message, song, "🎶 Now Playing 🎶");
       })
 
       .on("addSong", (message, queue, song) => {
-        this.announceSong(client, message, song, '🎶 Added 🎶');
+        this.announceSong(client, message, song, "🎶 Added 🎶", false);
       })
       .on("playList", (message, queue, playlist, song) => {
-        this.announceSong(client, message, song, '🎶 Now Playing 🎶');
+        this.announceSong(client, message, song, "🎶 Now Playing 🎶");
       })
       .on("addList", (message, queue, playlist) =>
         message.channel.send(
@@ -67,7 +67,7 @@ class init {
       });
   }
 
-  announceSong (client, message, song, title){
+  announceSong(client, message, song, title, reactions = true) {
     const embed = {
       color:
         client.colors[Math.floor(Math.random() * client.colors.length)].hex,
@@ -78,32 +78,34 @@ class init {
         url: song.thumbnail,
       },
       footer: {
-        text: `Requested by: ${song.user}`,
+        text: `Requested by: ${song.user.username}`,
       },
     };
 
     message.channel.send({ embed }).then(async (m) => {
-      const filter = (reaction, user) => {
-        return (
-          ["⏯️", "⏭️", "⏹️"].includes(reaction.emoji.name) &&
-          user.id === message.author.id &&
-          !user.bot
-        );
-      };
+      if (reactions) {
+        const filter = (reaction, user) => {
+          return (
+            ["⏯️", "⏭️", "⏹️"].includes(reaction.emoji.name) &&
+            user.id === message.author.id &&
+            !user.bot
+          );
+        };
 
-      const collector = m.createReactionCollector(filter);
+        const collector = m.createReactionCollector(filter);
 
-      collector.on("collect", (reaction) => {
-        if (reaction.emoji.name === "⏯️")
-          if (client.music.isPaused(m)) client.music.resume(m);
-          else client.music.pause(m);
-        if (reaction.emoji.name === "⏹️") client.music.stop(m);
-        if (reaction.emoji.name === "⏭️") client.music.skip(m);
-      });
+        collector.on("collect", (reaction) => {
+          if (reaction.emoji.name === "⏯️")
+            if (client.music.isPaused(m)) client.music.resume(m);
+            else client.music.pause(m);
+          if (reaction.emoji.name === "⏹️") client.music.stop(m);
+          if (reaction.emoji.name === "⏭️") client.music.skip(m);
+        });
 
-      await m.react("⏯️");
-      await m.react("⏹️");
-      await m.react("⏭️");
+        await m.react("⏯️");
+        await m.react("⏹️");
+        await m.react("⏭️");
+      }
     });
   }
 }
